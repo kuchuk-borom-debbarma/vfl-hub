@@ -1,6 +1,7 @@
 package dev.kuku.vfl.hub.controller;
 
 import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
+import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.services.queue.QueueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,5 +25,10 @@ public class MainController {
     public void addBlocks(@RequestBody List<ToAddBlock> toAddBlocks) {
         log.trace("addBlocks ${java.util.Arrays.toString(toAddBlocks.toArray())}");
         toAddBlocks.forEach(toAddBlock -> queueService.addBlockToQueue(toAddBlock));
+    }
+    @PostMapping("/logs")
+    public void addLogs(@RequestBody List<ToAddBlockLog> toAddBlockLogs) {
+        log.trace("addLogs ${java.util.Arrays.toString(toAddBlockLogs.toArray())}");
+        toAddBlockLogs.forEach(toAddBlockLog -> queueService.addBlockLogsToQueue(toAddBlockLog));
     }
 }
