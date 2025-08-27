@@ -32,8 +32,9 @@ public class VFLServiceImpl implements VFLService {
                         toAddBlock.getId(),
                         toAddBlock.getName(),
                         toAddBlock.getCreatedAt(),
-                        0,
-                        0,
+                        null,
+                        null,
+                        null,
                         null,
                         Instant.now().toEpochMilli())).toList();
         blockRepo.saveAll(blocks);
