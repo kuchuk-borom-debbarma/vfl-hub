@@ -75,7 +75,7 @@ public class VFLServiceImpl implements VFLService {
         var cr = cb.createQuery(Block.class);
         var root = cr.from(Block.class);
 
-        cr = cr.where(cb.isNull(root.get("parent_block_id")));
+        cr = cr.where(cb.isNull(root.get("parentBlockId")));
 
         if (cursor != null) {
             String cursorBlockId;
@@ -88,14 +88,14 @@ public class VFLServiceImpl implements VFLService {
             // Assuming cursor contains the last ID from previous page
             cr = cr.where(
                     cb.and(
-                            cb.isNull(root.get("parent_block_id")),
+                            cb.isNull(root.get("parentBlockId")),
                             cb.lessThan(root.get("id"), cursorBlockId)
                     )
             );
         }
 
         cr = cr.orderBy(
-                cb.desc(root.get("persisted_time")),
+                cb.desc(root.get("persistedTime")),
                 cb.desc(root.get("id"))
         );
 

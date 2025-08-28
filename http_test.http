@@ -1,0 +1,42 @@
+### Test POST /api/v1/blocks - Mixed blocks (some with parent, some without)
+POST http://localhost:8080/api/v1/blocks
+Content-Type: application/json
+
+[
+  {
+    "id": "block-1",
+    "name": "Root Block 1",
+    "parentBlockId": null,
+    "createdAt": 1693234567000
+  },
+  {
+    "id": "block-2",
+    "name": "Root Block 2",
+    "parentBlockId": null,
+    "createdAt": 1693234568000
+  },
+  {
+    "id": "block-3",
+    "name": "Child Block 1",
+    "parentBlockId": "block-1",
+    "createdAt": 1693234569000
+  },
+  {
+    "id": "block-4",
+    "name": "Child Block 2",
+    "parentBlockId": "block-1",
+    "createdAt": 1693234570000
+  }
+]
+
+### Test GET /api/v1/blocks - Default parameters
+GET http://localhost:8080/api/v1/blocks
+
+### Test GET /api/v1/blocks - With limit
+GET http://localhost:8080/api/v1/blocks?limit=5
+
+### Test GET /api/v1/blocks - With cursor
+GET http://localhost:8080/api/v1/blocks?cursor=YmxvY2stMQ==
+
+### Test GET /api/v1/blocks - With cursor and limit
+GET http://localhost:8080/api/v1/blocks?cursor=some-cursor-value&limit=20
