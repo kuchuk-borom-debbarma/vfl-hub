@@ -1,14 +1,18 @@
 package dev.kuku.vfl.hub.model.dtos;
 
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 public class ToAddBlock {
     private final String id;
     private final String name;
+    private final @Nullable String parentBlockId;
     private final long createdAt;
 
-    public ToAddBlock(String id, String name, long createdAt) {
+    public ToAddBlock(String id, String name, @Nullable String parentBlockId, long createdAt) {
         this.id = id;
         this.name = name;
+        this.parentBlockId = parentBlockId;
         this.createdAt = createdAt;
     }
 
@@ -18,6 +22,10 @@ public class ToAddBlock {
 
     public String getName() {
         return name;
+    }
+
+    public @Nullable String getParentBlockId() {
+        return parentBlockId;
     }
 
     public long getCreatedAt() {

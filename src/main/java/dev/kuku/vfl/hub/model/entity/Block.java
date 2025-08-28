@@ -16,24 +16,23 @@ public class Block {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "parent_block_id", nullable = true)
+    private @Nullable String parentBlockId;
+
     @Column(name = "created_at", nullable = false)
     private long createdAt;
 
-    @Nullable
     @Column(name = "entered_at", nullable = true)
-    private Long enteredAt;
+    private @Nullable Long enteredAt;
 
-    @Nullable
     @Column(name = "exited_at", nullable = true)
-    private Long exitedAt;
+    private @Nullable Long exitedAt;
 
-    @Nullable
     @Column(name = "exit_message", nullable = true)
-    private String exitMessage;
+    private @Nullable String exitMessage;
 
-    @Nullable
     @Column(name = "returned_at", nullable = true)
-    private Long returnedAt;
+    private @Nullable Long returnedAt;
 
     @Column(name = "persisted_time", nullable = false)
     private long persistedTime;
@@ -46,7 +45,7 @@ public class Block {
     }
 
     // Constructor matching the original record
-    public Block(String id, String name, long createdAt, @Nullable Long enteredAt,
+    public Block(String id, String name, @Nullable String parentBlockId, long createdAt, @Nullable Long enteredAt,
                  @Nullable Long exitedAt, @Nullable String exitMessage,
                  @Nullable Long returnedAt, long persistedTime) {
         this.id = id;
@@ -57,6 +56,7 @@ public class Block {
         this.exitMessage = exitMessage;
         this.returnedAt = returnedAt;
         this.persistedTime = persistedTime;
+        this.parentBlockId = parentBlockId;
     }
 
     // Getters
@@ -68,27 +68,27 @@ public class Block {
         return name;
     }
 
+    public @Nullable String getParentBlockId() {
+        return parentBlockId;
+    }
+
     public long getCreatedAt() {
         return createdAt;
     }
 
-    @Nullable
-    public Long getEnteredAt() {
+    public @Nullable Long getEnteredAt() {
         return enteredAt;
     }
 
-    @Nullable
-    public Long getExitedAt() {
+    public @Nullable Long getExitedAt() {
         return exitedAt;
     }
 
-    @Nullable
-    public String getExitMessage() {
+    public @Nullable String getExitMessage() {
         return exitMessage;
     }
 
-    @Nullable
-    public Long getReturnedAt() {
+    public @Nullable Long getReturnedAt() {
         return returnedAt;
     }
 
@@ -103,6 +103,10 @@ public class Block {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setParentBlockId(String parentBlockId) {
+        this.parentBlockId = parentBlockId;
     }
 
     public void setCreatedAt(long createdAt) {
@@ -131,15 +135,8 @@ public class Block {
 
     @Override
     public String toString() {
-        return "Block{" +
-               "id='" + id + '\'' +
-               ", name='" + name + '\'' +
-               ", createdAt=" + createdAt +
-               ", enteredAt=" + enteredAt +
-               ", exitedAt=" + exitedAt +
-               ", exitMessage='" + exitMessage + '\'' +
-               ", returnedAt=" + returnedAt +
-               ", persistedTime=" + persistedTime +
-               '}';
+        return """
+                Block($id, $name, $parentBlockId, $createdAt, $enteredAt, $exitedAt, $returnedAt, $persistedTime)
+                """;
     }
 }

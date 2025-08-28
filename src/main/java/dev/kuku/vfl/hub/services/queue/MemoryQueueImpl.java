@@ -55,8 +55,6 @@ public class MemoryQueueImpl implements QueueService {
             List<ToAddBlockLog> logsToAdd = new ArrayList<>(logQueue);
             logQueue.clear();
             vflService.persistLogs(logsToAdd);
-
-            /* retry with the incoming log; if it still fails, escalate */
             if (!logQueue.offer(blockLog)) {
                 throw new VFLException(
                         HttpStatus.INTERNAL_SERVER_ERROR,
