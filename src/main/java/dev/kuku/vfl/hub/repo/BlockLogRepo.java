@@ -1,4 +1,4 @@
-package dev.kuku.vfl.hub.services.vfl;
+package dev.kuku.vfl.hub.repo;
 
 import dev.kuku.vfl.hub.model.entity.BlockLog;
 import org.springframework.data.jpa.repository.JpaRepository;

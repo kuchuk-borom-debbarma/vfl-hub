@@ -1,8 +1,8 @@
 package dev.kuku.vfl.hub.model.dtos;
 
+import dev.kuku.vfl.hub.model.dtos.pagination.BlockCursor;
+import dev.kuku.vfl.hub.util.cursorUtil.BlockCursorUtil;
 import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.Base64;
 
 public class ToFetchBlock {
     public final String id;
@@ -22,6 +22,6 @@ public class ToFetchBlock {
         this.exitedAt = exitedAt;
         this.returnedAt = returnedAt;
         this.exitMessage = exitMessage;
-        this.cursor = Base64.getEncoder().encodeToString(id.getBytes());
+        this.cursor = BlockCursorUtil.encode(new BlockCursor(id, createdAt));
     }
 }

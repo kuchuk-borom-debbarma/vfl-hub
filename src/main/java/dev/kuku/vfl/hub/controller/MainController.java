@@ -3,6 +3,7 @@ package dev.kuku.vfl.hub.controller;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlock;
+import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
 import dev.kuku.vfl.hub.services.queue.QueueService;
 import dev.kuku.vfl.hub.services.vfl.VFLService;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -33,15 +34,24 @@ public class MainController {
     }
 
     @PostMapping("/logs")
+    @ResponseStatus(HttpStatus.OK)
     public void addLogs(@RequestBody List<ToAddBlockLog> toAddBlockLogs) {
         log.trace("addLogs ${java.util.Arrays.toString(toAddBlockLogs.toArray())}");
         toAddBlockLogs.forEach(toAddBlockLog -> queueService.addBlockLogsToQueue(toAddBlockLog));
     }
 
     @GetMapping("/blocks")
+    @ResponseStatus(HttpStatus.OK)
     public List<ToFetchBlock> getBlocks(@RequestParam(required = false) @Nullable String cursor,
                                         @RequestParam(defaultValue = "10") Integer limit) {
-        log.trace("getBlocks cursor = ${java.util.Arrays.toString($cursor, $limit");
+        log.trace("getBlocks cursor = $cursor, $limit");
         return vflService.getRootBlocks(cursor, limit);
+    }
+
+    @GetMapping("/logs/{blockId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false) @Nullable String cursor, @RequestParam(defaultValue = "2") int limit) {
+        log.trace("getLogs blockId = $blockId, cursor = $cursor, limit = $limit");
+        return vflService.getLogsByBlockId(blockId, cursor, limit);
     }
 }

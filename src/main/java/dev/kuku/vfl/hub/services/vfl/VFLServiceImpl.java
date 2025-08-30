@@ -1,12 +1,21 @@
 package dev.kuku.vfl.hub.services.vfl;
 
+import com.blazebit.persistence.CriteriaBuilder;
+import com.blazebit.persistence.CriteriaBuilderFactory;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlock;
+import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
+import dev.kuku.vfl.hub.model.dtos.pagination.BlockCursor;
+import dev.kuku.vfl.hub.model.dtos.pagination.BlockLogCursor;
 import dev.kuku.vfl.hub.model.entity.Block;
 import dev.kuku.vfl.hub.model.entity.BlockLog;
 import dev.kuku.vfl.hub.model.exception.VFLException;
+import dev.kuku.vfl.hub.repo.BlockLogRepo;
 import dev.kuku.vfl.hub.repo.BlockRepo;
+import dev.kuku.vfl.hub.util.VFLUtil;
+import dev.kuku.vfl.hub.util.cursorUtil.BlockCursorUtil;
+import dev.kuku.vfl.hub.util.cursorUtil.BlockLogCursorUtil;
 import jakarta.persistence.EntityManager;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -14,22 +23,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Base64;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class VFLServiceImpl implements VFLService {
     Logger log = LoggerFactory.getLogger(VFLServiceImpl.class);
+    //TODO use custom repo with blaze internally being used
     private final BlockRepo blockRepo;
     private final BlockLogRepo logRepo;
     private final EntityManager entityManager;
+    private final CriteriaBuilderFactory cbf;
 
-    public VFLServiceImpl(BlockRepo blockRepo, BlockLogRepo logRepo, EntityManager entityManager) {
+    public VFLServiceImpl(BlockRepo blockRepo, BlockLogRepo logRepo, EntityManager entityManager, CriteriaBuilderFactory cbf) {
         this.blockRepo = blockRepo;
         this.logRepo = logRepo;
         this.entityManager = entityManager;
+        this.cbf = cbf;
     }
 
     @Override
@@ -46,7 +56,8 @@ public class VFLServiceImpl implements VFLService {
                         null,
                         null,
                         null,
-                        Instant.now().toEpochMilli())).toList();
+                        VFLUtil.CurrentTime())
+                ).toList();
         blockRepo.saveAll(blocks);
     }
 
@@ -63,7 +74,7 @@ public class VFLServiceImpl implements VFLService {
                         l.getReferencedBlockId(),
                         l.getTimestamp(),
                         l.getLogType(),
-                        Instant.now().toEpochMilli()
+                        VFLUtil.CurrentTime()
                 ))
                 .toList();
         logRepo.saveAll(blockLogs);
@@ -71,41 +82,99 @@ public class VFLServiceImpl implements VFLService {
 
     @Override
     public List<ToFetchBlock> getRootBlocks(@Nullable String cursor, int limit) {
-        var cb = entityManager.getCriteriaBuilder();
-        var cr = cb.createQuery(Block.class);
-        var root = cr.from(Block.class);
+        log.trace("getRootBlocks cursor = ${cursor}, limit = ${limit}");
 
-        cr = cr.where(cb.isNull(root.get("parentBlockId")));
+        CriteriaBuilder<Block> cb = cbf.create(entityManager, Block.class)
+                .where("parentBlockId").isNull();
 
+        BlockCursor c = null;
         if (cursor != null) {
-            String cursorBlockId;
             try {
-                byte[] decodedBytes = Base64.getDecoder().decode(cursor);
-                cursorBlockId = new String(decodedBytes);
-            } catch (IllegalArgumentException e) {
-                throw new VFLException(HttpStatus.BAD_REQUEST, "Invalid cursor provided for fetching root blocks :- $cursor");
+                c = BlockCursorUtil.decode(cursor);
+            } catch (Exception e) {
+                throw new VFLException(HttpStatus.BAD_REQUEST,
+                        "Invalid cursor provided for fetching root blocks: " + cursor);
             }
-            // Assuming cursor contains the last ID from previous page
-            cr = cr.where(
-                    cb.and(
-                            cb.isNull(root.get("parentBlockId")),
-                            cb.lessThan(root.get("id"), cursorBlockId)
-                    )
-            );
         }
 
-        cr = cr.orderBy(
-                cb.desc(root.get("persistedTime")),
-                cb.desc(root.get("id"))
-        );
+        if (c != null) {
+            cb = cb.whereOr()
+                    .where("createdAt").lt(c.getTimestamp())
+                    .whereAnd()
+                    .where("createdAt").eq(c.getTimestamp())
+                    .where("id").lt(c.getBlockId())
+                    .endAnd()
+                    .endOr();
+        }
+        cb.orderByDesc("createdAt").orderByDesc("id");
 
-        var query = entityManager.createQuery(cr);
-        query.setMaxResults(limit);
+        // Apply descending order and limit
+        List<Block> blocks = cb.orderByDesc("createdAt")
+                .orderByDesc("id")
+                .setMaxResults(limit)
+                .getResultList();
 
-        List<Block> blocks = query.getResultList();
-
+        // Convert to ToFetchBlock DTOs
         return blocks.stream()
                 .map(this::convertToToFetchBlock)
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<ToFetchBlockLog> getLogsByBlockId(String blockId, @Nullable String cursor, int limit) {
+        log.trace("getLogsByBlockId blockId = $blockId, $cursor");
+
+        //TODO get from starting point for linear flow but for children show latest first.
+        CriteriaBuilder<BlockLog> cb = cbf.create(entityManager, BlockLog.class);
+        cb = cb.from(BlockLog.class, "bl")
+                .where("bl.blockId").eq(blockId);
+        if (cursor != null) {
+            try {
+                BlockLogCursor c = BlockLogCursorUtil.decode(cursor);
+                cb.whereOr()
+                        .whereAnd()
+                        .where("bl.timestamp").eq(c.timestamp())
+                        .where("bl.id").gt(c.id())
+                        .endAnd()
+                        .where("bl.timestamp").gt(c.timestamp())
+                        .endOr();
+            } catch (Exception e) {
+                log.warn("Failed to parse cursor $cursor");
+            }
+        }
+
+        List<BlockLog> rawLogs = cb.orderByAsc("bl.timestamp")
+                .orderByAsc("bl.id")
+                .setMaxResults(limit)
+                .getResultList();
+
+        //Collect list of blockIds that needs to be fetched
+        Set<String> toFetchBlocks = new HashSet<>();
+        rawLogs.forEach(log -> {
+            @Nullable String referencedBlockId = log.getReferencedBlockId();
+            if (referencedBlockId != null && toFetchBlocks.contains(referencedBlockId) == false) {
+                toFetchBlocks.add(referencedBlockId);
+            }
+        });
+        if (toFetchBlocks.isEmpty()) {
+            log.debug("No fetch blocks found to fetch. Every log has no referenced block");
+            return rawLogs.stream().map(blockLog -> convertToToFetchBlockLog(blockLog, null)).toList();
+        }
+        Map<String, ToFetchBlock> referencedBlocks = new HashMap<>();
+        CriteriaBuilder<Block> cb2 = cbf.create(entityManager, Block.class);
+        cb2.distinct()
+                .where("id").in(toFetchBlocks)
+                .getResultList()
+                .forEach(block -> referencedBlocks.put(block.getId(), this.convertToToFetchBlock(block)));
+        return rawLogs.stream().map(blockLog -> {
+                            @Nullable String refBlock = blockLog.getReferencedBlockId();
+                            if (refBlock == null) {
+                                return convertToToFetchBlockLog(blockLog, null);
+                            }
+                            return convertToToFetchBlockLog(blockLog, referencedBlocks.get(refBlock));
+                        }
+                )
                 .collect(Collectors.toList());
     }
 
@@ -118,6 +187,17 @@ public class VFLServiceImpl implements VFLService {
                 block.getExitedAt(),
                 block.getReturnedAt(),
                 block.getExitMessage()
+        );
+    }
+
+    private ToFetchBlockLog convertToToFetchBlockLog(BlockLog blockLog, @Nullable ToFetchBlock referencedBlock) {
+        return new ToFetchBlockLog(
+                blockLog.getId(),
+                blockLog.getBlockId(),
+                blockLog.getMessage(),
+                referencedBlock,
+                blockLog.getTimestamp(),
+                blockLog.getLogType()
         );
     }
 }

@@ -16,22 +16,22 @@ public class Block {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "parent_block_id", nullable = true)
+    @Column(name = "parent_block_id")
     private @Nullable String parentBlockId;
 
     @Column(name = "created_at", nullable = false)
     private long createdAt;
 
-    @Column(name = "entered_at", nullable = true)
+    @Column(name = "entered_at")
     private @Nullable Long enteredAt;
 
-    @Column(name = "exited_at", nullable = true)
+    @Column(name = "exited_at")
     private @Nullable Long exitedAt;
 
-    @Column(name = "exit_message", nullable = true)
+    @Column(name = "exit_message")
     private @Nullable String exitMessage;
 
-    @Column(name = "returned_at", nullable = true)
+    @Column(name = "returned_at")
     private @Nullable Long returnedAt;
 
     @Column(name = "persisted_time", nullable = false)

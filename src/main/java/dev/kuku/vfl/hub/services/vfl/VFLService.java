@@ -3,6 +3,7 @@ package dev.kuku.vfl.hub.services.vfl;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlock;
+import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface VFLService {
     void persistLogs(List<ToAddBlockLog> logs);
 
     List<ToFetchBlock> getRootBlocks(@Nullable String cursor, int limit);
+
+    List<ToFetchBlockLog> getLogsByBlockId(String blockId, @Nullable String cursor, int limit);
 }

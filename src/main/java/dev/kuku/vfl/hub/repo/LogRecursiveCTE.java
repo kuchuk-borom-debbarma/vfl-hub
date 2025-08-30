@@ -1,46 +1,33 @@
-package dev.kuku.vfl.hub.model.entity;
+package dev.kuku.vfl.hub.repo;
 
-import jakarta.persistence.*;
+import com.blazebit.persistence.CTE;
+import dev.kuku.vfl.hub.model.entity.LogType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.util.UUID;
+
+@CTE
 @Entity
-@Table(name = "block_logs")
-public class BlockLog {
-
-    @Id
+public class LogRecursiveCTE {
     private String id;
-
-    @Column(name = "block_id", nullable = false)
     private String blockId;
-
-    @Column(name = "message")
     private @Nullable String message;
-
-    @Column(name = "parent_log_id")
     private @Nullable String parentLogId;
-
-    @Column(name = "referenced_block_id")
     private @Nullable String referencedBlockId;
-
-    @Column(name = "timestamp", nullable = false)
     private long timestamp;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "log_type", nullable = false)
     private LogType logType;
-
-    @Column(name = "persisted_time", nullable = false)
     private long persistedTime;
+    private long depth;
 
-    // Default constructor for JPA
-    protected BlockLog() {
+    public LogRecursiveCTE() {
         id = "";
         blockId = "";
         logType = LogType.INFO;
     }
 
-    // Constructor matching the original record
-    public BlockLog(String id, String blockId, @Nullable String message, @Nullable String parentLogId, @Nullable String referencedBlockId, long timestamp, LogType logType, long persistedTime) {
+    public LogRecursiveCTE(String id, String blockId, @Nullable String message, @Nullable String parentLogId, @Nullable String referencedBlockId, long timestamp, LogType logType, long persistedTime, int depth) {
         this.id = id;
         this.blockId = blockId;
         this.message = message;
@@ -49,9 +36,18 @@ public class BlockLog {
         this.timestamp = timestamp;
         this.logType = logType;
         this.persistedTime = persistedTime;
+        this.depth = depth;
     }
 
-    // Getters
+    public long getDepth() {
+        return depth;
+    }
+
+    public void setDepth(long depth) {
+        this.depth = depth;
+    }
+
+    @Id
     public String getId() {
         return id;
     }
@@ -84,7 +80,6 @@ public class BlockLog {
         return persistedTime;
     }
 
-    // Setters (if needed for JPA or business logic)
     public void setId(String id) {
         this.id = id;
     }
@@ -115,10 +110,5 @@ public class BlockLog {
 
     public void setPersistedTime(long persistedTime) {
         this.persistedTime = persistedTime;
-    }
-
-    @Override
-    public String toString() {
-        return "BlockLog{" + "id='" + id + '\'' + ", blockId='" + blockId + '\'' + ", message='" + message + '\'' + ", parentLogId='" + parentLogId + '\'' + ", referencedBlockId='" + referencedBlockId + '\'' + ", timestamp=" + timestamp + ", logType=" + logType + ", persistedTime=" + persistedTime + '}';
     }
 }

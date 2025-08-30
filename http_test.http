@@ -29,8 +29,6 @@ Content-Type: application/json
   }
 ]
 
-### Test GET /api/v1/blocks - Default parameters
-GET http://localhost:8080/api/v1/blocks
 
 ### Test GET /api/v1/blocks - With limit
 GET http://localhost:8080/api/v1/blocks?limit=5
@@ -38,5 +36,196 @@ GET http://localhost:8080/api/v1/blocks?limit=5
 ### Test GET /api/v1/blocks - With cursor
 GET http://localhost:8080/api/v1/blocks?cursor=YmxvY2stMQ==
 
-### Test GET /api/v1/blocks - With cursor and limit
-GET http://localhost:8080/api/v1/blocks?cursor=some-cursor-value&limit=20
+
+
+
+### Test POST /api/v1/logs - Hierarchical logs for block-1
+POST http://localhost:8080/api/v1/logs
+Content-Type: application/json
+
+[
+  {
+    "id": "log-1",
+    "blockId": "block-1",
+    "message": "Root Block 1 initialized successfully",
+    "parentLogId": null,
+    "referencedBlockId": null,
+    "timestamp": 1693234567100,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-2",
+    "blockId": "block-1",
+    "message": "Configuration loaded from config.json",
+    "parentLogId": "log-1",
+    "referencedBlockId": null,
+    "timestamp": 1693234567200,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-3",
+    "blockId": "block-1",
+    "message": "Database connection established",
+    "parentLogId": "log-1",
+    "referencedBlockId": null,
+    "timestamp": 1693234567300,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-4",
+    "blockId": "block-1",
+    "message": "Connection pool size set to 10",
+    "parentLogId": "log-3",
+    "referencedBlockId": null,
+    "timestamp": 1693234567350,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-5",
+    "blockId": "block-1",
+    "message": "Starting block processing workflow",
+    "parentLogId": null,
+    "referencedBlockId": null,
+    "timestamp": 1693234568000,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-6",
+    "blockId": "block-1",
+    "message": "Validating input parameters",
+    "parentLogId": "log-5",
+    "referencedBlockId": null,
+    "timestamp": 1693234568100,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-7",
+    "blockId": "block-1",
+    "message": "Input validation completed successfully",
+    "parentLogId": "log-6",
+    "referencedBlockId": null,
+    "timestamp": 1693234568150,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-8",
+    "blockId": "block-1",
+    "message": "Processing child blocks",
+    "parentLogId": "log-5",
+    "referencedBlockId": "block-3",
+    "timestamp": 1693234569000,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-9",
+    "blockId": "block-1",
+    "message": "Child Block 1 processing started",
+    "parentLogId": "log-8",
+    "referencedBlockId": "block-3",
+    "timestamp": 1693234569100,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-10",
+    "blockId": "block-1",
+    "message": "Child Block 1 processing completed",
+    "parentLogId": "log-9",
+    "referencedBlockId": "block-3",
+    "timestamp": 1693234569500,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-11",
+    "blockId": "block-1",
+    "message": "Child Block 2 processing started",
+    "parentLogId": "log-8",
+    "referencedBlockId": "block-4",
+    "timestamp": 1693234570000,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-12",
+    "blockId": "block-1",
+    "message": "Child Block 2 processing completed",
+    "parentLogId": "log-11",
+    "referencedBlockId": "block-4",
+    "timestamp": 1693234570500,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-13",
+    "blockId": "block-1",
+    "message": "Error occurred during cleanup",
+    "parentLogId": null,
+    "referencedBlockId": null,
+    "timestamp": 1693234571000,
+    "logType": "ERROR"
+  },
+  {
+    "id": "log-14",
+    "blockId": "block-1",
+    "message": "Stack trace: NullPointerException at line 42",
+    "parentLogId": "log-13",
+    "referencedBlockId": null,
+    "timestamp": 1693234571050,
+    "logType": "ERROR"
+  },
+  {
+    "id": "log-15",
+    "blockId": "block-1",
+    "message": "Attempting error recovery",
+    "parentLogId": "log-13",
+    "referencedBlockId": null,
+    "timestamp": 1693234571100,
+    "logType": "WARN"
+  },
+  {
+    "id": "log-16",
+    "blockId": "block-1",
+    "message": "Error recovery successful",
+    "parentLogId": "log-15",
+    "referencedBlockId": null,
+    "timestamp": 1693234571200,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-17",
+    "blockId": "block-1",
+    "message": "Block execution completed",
+    "parentLogId": null,
+    "referencedBlockId": null,
+    "timestamp": 1693234572000,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-18",
+    "blockId": "block-1",
+    "message": "Execution time: 5.2 seconds",
+    "parentLogId": "log-17",
+    "referencedBlockId": null,
+    "timestamp": 1693234572050,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-19",
+    "blockId": "block-1",
+    "message": "Memory usage: 245MB",
+    "parentLogId": "log-17",
+    "referencedBlockId": null,
+    "timestamp": 1693234572100,
+    "logType": "INFO"
+  },
+  {
+    "id": "log-20",
+    "blockId": "block-1",
+    "message": "Cleanup completed successfully",
+    "parentLogId": "log-17",
+    "referencedBlockId": null,
+    "timestamp": 1693234572200,
+    "logType": "INFO"
+  }
+]
+
+
+### Get logs of block
+GET http://localhost:8080/api/v1/logs/block-1?limit=2&cursor=bG9nLTg6MTY5MzIzNDU2OTAwMA
