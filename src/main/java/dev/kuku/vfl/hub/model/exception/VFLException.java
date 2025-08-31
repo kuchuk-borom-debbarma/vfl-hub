@@ -10,4 +10,12 @@ public class VFLException extends RuntimeException {
         this.statusCode = statusCode;
         this.message = message;
     }
+
+    public HttpStatus getStatusCode() {
+        return statusCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

@@ -1,12 +1,12 @@
 package dev.kuku.vfl.hub.repo;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import com.blazebit.persistence.CTE;
+
 import dev.kuku.vfl.hub.model.entity.LogType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import org.checkerframework.checker.nullness.qual.Nullable;
-
-import java.util.UUID;
 
 @CTE
 @Entity
@@ -27,7 +27,8 @@ public class LogRecursiveCTE {
         logType = LogType.INFO;
     }
 
-    public LogRecursiveCTE(String id, String blockId, @Nullable String message, @Nullable String parentLogId, @Nullable String referencedBlockId, long timestamp, LogType logType, long persistedTime, int depth) {
+    public LogRecursiveCTE(String id, String blockId, @Nullable String message, @Nullable String parentLogId,
+            @Nullable String referencedBlockId, long timestamp, LogType logType, long persistedTime, int depth) {
         this.id = id;
         this.blockId = blockId;
         this.message = message;
