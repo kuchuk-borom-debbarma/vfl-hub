@@ -4,15 +4,19 @@ import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlock;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
+import dev.kuku.vfl.hub.model.exception.VFLException;
 import dev.kuku.vfl.hub.services.queue.QueueService;
 import dev.kuku.vfl.hub.services.vfl.VFLService;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -54,4 +58,18 @@ public class MainController {
         log.trace("getLogs blockId = $blockId, cursor = $cursor, limit = $limit");
         return vflService.getLogsByBlockId(blockId, cursor, limit);
     }
+
+    @ExceptionHandler(VFLException.class)
+    public ResponseEntity<Map<String, Object>> error(VFLException e) {
+        log.error("VFL Exception occurred", e);
+
+        Map<String, Object> errorResponse = Map.of(
+                "error", "VFL_EXCEPTION",
+                "message", e.getMessage() != null ? e.getMessage() : "An error occurred",
+                "timestamp", Instant.now()
+        );
+
+        return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
+    }
+
 }
