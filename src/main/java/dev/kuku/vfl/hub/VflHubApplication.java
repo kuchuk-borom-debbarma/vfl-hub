@@ -7,7 +7,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @SpringBootApplication
 @EnableAsync
 public class VflHubApplication {
-
+    //TODO use hypertables for timeseries as it will make it easier for fetching data based on time in future
+    //TODO cloud service!
     public static void main(String[] args) {
         SpringApplication.run(VflHubApplication.class, args);
     }
