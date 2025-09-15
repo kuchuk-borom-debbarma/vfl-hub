@@ -8,15 +8,17 @@ import org.springframework.lang.Nullable;
 public class ToFetchBlockLog {
     private final String id;
     private final String blockId;
+    private final String parentLogId;
     private final @Nullable String message;
     private @Nullable ToFetchBlock referencedBlock;
     private final long timestamp;
     private final LogType logType;
     private final String cursor;
 
-    public ToFetchBlockLog(String id, String blockId, @Nullable String message, @Nullable ToFetchBlock referencedBlock, long timestamp, LogType logType) {
+    public ToFetchBlockLog(String id, String blockId, String parentLogId, @Nullable String message, @Nullable ToFetchBlock referencedBlock, long timestamp, LogType logType) {
         this.id = id;
         this.blockId = blockId;
+        this.parentLogId = parentLogId;
         this.message = message;
         this.referencedBlock = referencedBlock;
         this.timestamp = timestamp;
@@ -53,5 +55,7 @@ public class ToFetchBlockLog {
         return cursor;
     }
 
-
+    public String getParentLogId() {
+        return parentLogId;
+    }
 }

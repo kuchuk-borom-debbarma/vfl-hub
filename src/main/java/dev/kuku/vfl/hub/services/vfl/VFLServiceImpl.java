@@ -205,6 +205,7 @@ public class VFLServiceImpl implements VFLService {
     private ToFetchBlockLog convertToToFetchBlockLog(BlockLog blockLog, @Nullable ToFetchBlock referencedBlock) {
         return new ToFetchBlockLog(
                 blockLog.getId(),
+                blockLog.getParentLogId(),
                 blockLog.getBlockId(),
                 blockLog.getMessage(),
                 referencedBlock,
