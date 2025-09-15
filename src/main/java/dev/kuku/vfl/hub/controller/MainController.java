@@ -7,7 +7,6 @@ import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
 import dev.kuku.vfl.hub.model.exception.VFLException;
 import dev.kuku.vfl.hub.services.queue.QueueService;
 import dev.kuku.vfl.hub.services.vfl.VFLService;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -21,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
+@CrossOrigin("*")
 public class MainController {
     Logger log = LoggerFactory.getLogger(MainController.class);
     private final QueueService queueService;
@@ -36,7 +36,7 @@ public class MainController {
     @ResponseStatus(HttpStatus.OK)
     public void addBlocks(@RequestBody List<ToAddBlock> toAddBlocks) {
         log.trace("addBlocks ${java.util.Arrays.toString(toAddBlocks.toArray())}");
-        toAddBlocks.forEach(toAddBlock -> queueService.addBlockToQueue(toAddBlock));
+        toAddBlocks.forEach(queueService::addBlockToQueue);
     }
 
     //Add logs
@@ -44,13 +44,13 @@ public class MainController {
     @ResponseStatus(HttpStatus.OK)
     public void addLogs(@RequestBody List<ToAddBlockLog> toAddBlockLogs) {
         log.trace("addLogs ${java.util.Arrays.toString(toAddBlockLogs.toArray())}");
-        toAddBlockLogs.forEach(toAddBlockLog -> queueService.addBlockLogsToQueue(toAddBlockLog));
+        toAddBlockLogs.forEach(queueService::addBlockLogsToQueue);
     }
 
     //Get blocks
     @GetMapping("/blocks")
     @ResponseStatus(HttpStatus.OK)
-    public List<ToFetchBlock> getBlocks(@RequestParam(required = false) @Nullable String cursor,
+    public List<ToFetchBlock> getBlocks(@RequestParam(required = false)  String cursor,
                                         @RequestParam(defaultValue = "10") Integer limit) {
         log.trace("getBlocks cursor = $cursor, $limit");
         return vflService.getRootBlocks(cursor, limit);
@@ -59,7 +59,7 @@ public class MainController {
     //Get logs of a block
     @GetMapping("/logs/{blockId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false) @Nullable String cursor, @RequestParam(defaultValue = "2") int limit) {
+    public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false)  String cursor, @RequestParam(defaultValue = "2") int limit) {
         log.trace("getLogs blockId = $blockId, cursor = $cursor, limit = $limit");
         return vflService.getLogsByBlockId(blockId, cursor, limit);
     }

@@ -1,12 +1,12 @@
 package dev.kuku.vfl.hub.repo;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import com.blazebit.persistence.CTE;
 
 import dev.kuku.vfl.hub.model.entity.LogType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.lang.Nullable;
 
 @CTE
 @Entity

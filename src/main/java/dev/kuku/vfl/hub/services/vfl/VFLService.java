@@ -4,7 +4,7 @@ import dev.kuku.vfl.hub.model.dtos.ToAddBlock;
 import dev.kuku.vfl.hub.model.dtos.ToAddBlockLog;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlock;
 import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 

@@ -17,10 +17,10 @@ import dev.kuku.vfl.hub.util.VFLUtil;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockCursorUtil;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockLogCursorUtil;
 import jakarta.persistence.EntityManager;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -152,7 +152,7 @@ public class VFLServiceImpl implements VFLService {
         //Collect list of blockIds that needs to be fetched
         Set<String> toFetchBlocks = new HashSet<>();
         rawLogs.forEach(log -> {
-            @Nullable String referencedBlockId = log.getReferencedBlockId();
+            String referencedBlockId = log.getReferencedBlockId();
             if (referencedBlockId != null && toFetchBlocks.contains(referencedBlockId) == false) {
                 toFetchBlocks.add(referencedBlockId);
             }
@@ -168,7 +168,7 @@ public class VFLServiceImpl implements VFLService {
                 .getResultList()
                 .forEach(block -> referencedBlocks.put(block.getId(), this.convertToToFetchBlock(block)));
         return rawLogs.stream().map(blockLog -> {
-                            @Nullable String refBlock = blockLog.getReferencedBlockId();
+                            String refBlock = blockLog.getReferencedBlockId();
                             if (refBlock == null) {
                                 return convertToToFetchBlockLog(blockLog, null);
                             }

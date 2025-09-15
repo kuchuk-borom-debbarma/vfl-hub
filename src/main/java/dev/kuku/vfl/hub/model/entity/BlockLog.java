@@ -1,7 +1,7 @@
 package dev.kuku.vfl.hub.model.entity;
 
 import jakarta.persistence.*;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "block_logs")

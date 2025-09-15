@@ -2,7 +2,7 @@ package dev.kuku.vfl.hub.model.dtos;
 
 import dev.kuku.vfl.hub.model.dtos.pagination.BlockCursor;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockCursorUtil;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 public class ToFetchBlock {
     public final String id;

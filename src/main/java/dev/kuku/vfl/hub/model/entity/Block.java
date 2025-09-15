@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "blocks")

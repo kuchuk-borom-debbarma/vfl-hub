@@ -1,7 +1,7 @@
 package dev.kuku.vfl.hub.model.dtos;
 
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 public class ToAddBlock {
     private final String id;

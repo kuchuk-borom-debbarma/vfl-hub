@@ -5,7 +5,6 @@ import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.spi.CriteriaBuilderConfiguration;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,7 @@ import org.springframework.context.annotation.Scope;
 @Configuration
 public class BlazePersistenceConfiguration {
     @PersistenceUnit
-    private @MonotonicNonNull EntityManagerFactory entityManagerFactory;
+    private EntityManagerFactory entityManagerFactory;
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)

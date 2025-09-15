@@ -1,7 +1,7 @@
 package dev.kuku.vfl.hub.model.dtos;
 
 import dev.kuku.vfl.hub.model.entity.LogType;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 public class ToAddBlockLog {
     private final String id;

@@ -3,7 +3,7 @@ package dev.kuku.vfl.hub.model.dtos;
 import dev.kuku.vfl.hub.model.dtos.pagination.BlockLogCursor;
 import dev.kuku.vfl.hub.model.entity.LogType;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockLogCursorUtil;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 public class ToFetchBlockLog {
     private final String id;
