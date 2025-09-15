@@ -178,6 +178,18 @@ public class VFLServiceImpl implements VFLService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public @Nullable ToFetchBlock getBlockById(String blockId) {
+        log.trace("getBlockById blockId = $blockId");
+
+        var raw = blockRepo.findById(blockId);
+        if (raw.isEmpty()) {
+            log.warn("Block with id {} not found", blockId);
+            return null;
+        }
+        return convertToToFetchBlock(raw.get());
+    }
+
     private ToFetchBlock convertToToFetchBlock(Block block) {
         return new ToFetchBlock(
                 block.getId(),

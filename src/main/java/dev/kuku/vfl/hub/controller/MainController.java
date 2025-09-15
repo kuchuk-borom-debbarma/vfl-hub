@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
@@ -30,6 +31,7 @@ public class MainController {
         this.vflService = vflService;
     }
 
+    //Add blocks
     @PostMapping("/blocks")
     @ResponseStatus(HttpStatus.OK)
     public void addBlocks(@RequestBody List<ToAddBlock> toAddBlocks) {
@@ -37,6 +39,7 @@ public class MainController {
         toAddBlocks.forEach(toAddBlock -> queueService.addBlockToQueue(toAddBlock));
     }
 
+    //Add logs
     @PostMapping("/logs")
     @ResponseStatus(HttpStatus.OK)
     public void addLogs(@RequestBody List<ToAddBlockLog> toAddBlockLogs) {
@@ -44,6 +47,7 @@ public class MainController {
         toAddBlockLogs.forEach(toAddBlockLog -> queueService.addBlockLogsToQueue(toAddBlockLog));
     }
 
+    //Get blocks
     @GetMapping("/blocks")
     @ResponseStatus(HttpStatus.OK)
     public List<ToFetchBlock> getBlocks(@RequestParam(required = false) @Nullable String cursor,
@@ -52,11 +56,25 @@ public class MainController {
         return vflService.getRootBlocks(cursor, limit);
     }
 
+    //Get logs of a block
     @GetMapping("/logs/{blockId}")
     @ResponseStatus(HttpStatus.OK)
     public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false) @Nullable String cursor, @RequestParam(defaultValue = "2") int limit) {
         log.trace("getLogs blockId = $blockId, cursor = $cursor, limit = $limit");
         return vflService.getLogsByBlockId(blockId, cursor, limit);
+    }
+
+    //get block by id
+    @GetMapping("/block/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ToFetchBlock getBlock(@PathVariable String id) {
+        log.trace("getBlock id = $id");
+
+        var v = vflService.getBlockById(id);
+        if (v == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return v;
     }
 
     @ExceptionHandler(VFLException.class)

@@ -17,4 +17,6 @@ public interface VFLService {
     List<ToFetchBlock> getRootBlocks(@Nullable String cursor, int limit);
 
     List<ToFetchBlockLog> getLogsByBlockId(String blockId, @Nullable String cursor, int limit);
+
+    @Nullable ToFetchBlock getBlockById(String blockId);
 }

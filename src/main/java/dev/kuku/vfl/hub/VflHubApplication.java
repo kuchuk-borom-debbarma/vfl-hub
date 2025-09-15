@@ -12,5 +12,4 @@ public class VflHubApplication {
     public static void main(String[] args) {
         SpringApplication.run(VflHubApplication.class, args);
     }
-
 }
