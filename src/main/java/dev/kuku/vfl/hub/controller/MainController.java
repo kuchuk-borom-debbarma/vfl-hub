@@ -50,7 +50,7 @@ public class MainController {
     //Get blocks
     @GetMapping("/blocks")
     @ResponseStatus(HttpStatus.OK)
-    public List<ToFetchBlock> getBlocks(@RequestParam(required = false)  String cursor,
+    public List<ToFetchBlock> getBlocks(@RequestParam(required = false) String cursor,
                                         @RequestParam(defaultValue = "10") Integer limit) {
         log.trace("getBlocks cursor = $cursor, $limit");
         return vflService.getRootBlocks(cursor, limit);
@@ -59,9 +59,11 @@ public class MainController {
     //Get logs of a block
     @GetMapping("/logs/{blockId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false)  String cursor, @RequestParam(defaultValue = "2") int limit) {
+    public List<ToFetchBlockLog> getLogs(@PathVariable String blockId, @RequestParam(required = false) String cursor, @RequestParam(defaultValue = "2") int limit) {
         log.trace("getLogs blockId = $blockId, cursor = $cursor, limit = $limit");
-        return vflService.getLogsByBlockId(blockId, cursor, limit);
+        var fetched = vflService.getLogsByBlockId(blockId, cursor, limit);
+        log.debug("getLogs of $blockId  = $fetched");
+        return fetched;
     }
 
     //get block by id
