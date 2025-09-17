@@ -18,6 +18,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * In memory queue that simply holds the data in a queue and flushes them periodically in background thread. OR when the capacity is full
+ */
 @Service
 public class MemoryQueueImpl implements QueueService {
 

@@ -62,6 +62,63 @@ public class VFLServiceImpl implements VFLService {
     }
 
     @Override
+    public void updateBlockEntered(Map<String, Long> data) {
+        log.trace("updateBlockEntered data = {}", data);
+        
+        for (Map.Entry<String, Long> entry : data.entrySet()) {
+            String blockId = entry.getKey();
+            Long enteredAt = entry.getValue();
+            
+            Optional<Block> blockOpt = blockRepo.findById(blockId);
+            if (blockOpt.isPresent()) {
+                Block block = blockOpt.get();
+                block.setEnteredAt(enteredAt);
+                blockRepo.save(block);
+            } else {
+                log.warn("Block with id {} not found for updating enteredAt", blockId);
+            }
+        }
+    }
+
+    @Override
+    public void updateBlockExited(Map<String, Long> data) {
+        log.trace("updateBlockExited data = {}", data);
+        
+        for (Map.Entry<String, Long> entry : data.entrySet()) {
+            String blockId = entry.getKey();
+            Long exitedAt = entry.getValue();
+            
+            Optional<Block> blockOpt = blockRepo.findById(blockId);
+            if (blockOpt.isPresent()) {
+                Block block = blockOpt.get();
+                block.setExitedAt(exitedAt);
+                blockRepo.save(block);
+            } else {
+                log.warn("Block with id {} not found for updating exitedAt", blockId);
+            }
+        }
+    }
+
+    @Override
+    public void updateBlockReturned(Map<String, Long> data) {
+        log.trace("updateBlockReturned data = {}", data);
+        
+        for (Map.Entry<String, Long> entry : data.entrySet()) {
+            String blockId = entry.getKey();
+            Long returnedAt = entry.getValue();
+            
+            Optional<Block> blockOpt = blockRepo.findById(blockId);
+            if (blockOpt.isPresent()) {
+                Block block = blockOpt.get();
+                block.setReturnedAt(returnedAt);
+                blockRepo.save(block);
+            } else {
+                log.warn("Block with id {} not found for updating returnedAt", blockId);
+            }
+        }
+    }
+
+    @Override
     public void persistLogs(List<ToAddBlockLog> logs) {
         log.trace("persistLogs ${java.util.Arrays.toString(logs.toArray())}");
 

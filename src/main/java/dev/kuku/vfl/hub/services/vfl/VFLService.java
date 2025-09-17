@@ -7,10 +7,17 @@ import dev.kuku.vfl.hub.model.dtos.ToFetchBlockLog;
 import org.springframework.lang.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface VFLService {
     void persistBlocks(List<ToAddBlock> toAddBlocks);
+
+    void updateBlockEntered(Map<String, Long> data);
+
+    void updateBlockExited(Map<String, Long> data);
+
+    void updateBlockReturned(Map<String, Long> data);
 
     void persistLogs(List<ToAddBlockLog> logs);
 
@@ -18,5 +25,6 @@ public interface VFLService {
 
     List<ToFetchBlockLog> getLogsByBlockId(String blockId, @Nullable String cursor, int limit);
 
-    @Nullable ToFetchBlock getBlockById(String blockId);
+    @Nullable
+    ToFetchBlock getBlockById(String blockId);
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.springframework.lang.Nullable;
 
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "blocks")
 public class Block {
@@ -105,7 +106,7 @@ public class Block {
         this.name = name;
     }
 
-    public void setParentBlockId(String parentBlockId) {
+    public void setParentBlockId(@Nullable String parentBlockId) {
         this.parentBlockId = parentBlockId;
     }
 
