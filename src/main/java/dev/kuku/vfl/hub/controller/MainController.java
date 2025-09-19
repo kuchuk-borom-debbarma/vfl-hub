@@ -29,6 +29,13 @@ public class MainController {
         this.vflService = vflService;
     }
 
+    @PostMapping("/purge")
+    @ResponseStatus(HttpStatus.OK)
+    public void purgeDEBUG(){
+        log.trace("purgeDEBUG");
+        vflService.purge();
+    }
+
     //Add blocks
     @PostMapping("/blocks")
     @ResponseStatus(HttpStatus.OK)

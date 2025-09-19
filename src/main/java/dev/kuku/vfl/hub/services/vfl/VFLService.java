@@ -27,4 +27,6 @@ public interface VFLService {
 
     @Nullable
     ToFetchBlock getBlockById(String blockId);
+
+    void purge();
 }

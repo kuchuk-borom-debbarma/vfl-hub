@@ -83,11 +83,11 @@ public class VFLServiceImpl implements VFLService {
     @Override
     public void updateBlockExited(Map<String, Long> data) {
         log.trace("updateBlockExited data = {}", data);
-        
+
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String blockId = entry.getKey();
             Long exitedAt = entry.getValue();
-            
+
             Optional<Block> blockOpt = blockRepo.findById(blockId);
             if (blockOpt.isPresent()) {
                 Block block = blockOpt.get();
@@ -245,6 +245,14 @@ public class VFLServiceImpl implements VFLService {
             return null;
         }
         return convertToToFetchBlock(raw.get());
+    }
+
+    @Override
+    public void purge() {
+        log.trace("purging data");
+
+        logRepo.deleteAll();
+        blockRepo.deleteAll();
     }
 
     private ToFetchBlock convertToToFetchBlock(Block block) {
