@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ public class MainController {
 
     @PostMapping("/purge")
     @ResponseStatus(HttpStatus.OK)
-    public void purgeDEBUG(){
+    public void purgeDEBUG() {
         log.trace("purgeDEBUG");
         vflService.purge();
     }
@@ -111,17 +112,23 @@ public class MainController {
         return v;
     }
 
+    @DeleteMapping("/blocks/{ids}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteBlocksById(@PathVariable("ids") String rawIds) {
+        log.trace("deleteBlocksById $rawIds");
+
+        var toDelete = Arrays.stream(rawIds.split(",")).toList();
+        vflService.deleteBlocksById(toDelete);
+    }
+
     @ExceptionHandler(VFLException.class)
     public ResponseEntity<Map<String, Object>> error(VFLException e) {
         log.error("VFL Exception occurred", e);
-
         Map<String, Object> errorResponse = Map.of(
                 "error", "VFL_EXCEPTION",
                 "message", e.getMessage() != null ? e.getMessage() : "An error occurred",
                 "timestamp", Instant.now()
         );
-
         return ResponseEntity.status(e.getStatusCode()).body(errorResponse);
     }
-
 }

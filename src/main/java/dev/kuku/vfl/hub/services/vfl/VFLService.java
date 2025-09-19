@@ -28,5 +28,8 @@ public interface VFLService {
     @Nullable
     ToFetchBlock getBlockById(String blockId);
 
+    void deleteBlocksById(List<String> blockIds);
+
     void purge();
+
 }

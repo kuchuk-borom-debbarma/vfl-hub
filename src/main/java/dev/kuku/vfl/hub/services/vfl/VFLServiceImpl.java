@@ -17,6 +17,7 @@ import dev.kuku.vfl.hub.util.VFLUtil;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockCursorUtil;
 import dev.kuku.vfl.hub.util.cursorUtil.BlockLogCursorUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO transactional
 @Service
 public class VFLServiceImpl implements VFLService {
     Logger log = LoggerFactory.getLogger(VFLServiceImpl.class);
@@ -64,11 +66,11 @@ public class VFLServiceImpl implements VFLService {
     @Override
     public void updateBlockEntered(Map<String, Long> data) {
         log.trace("updateBlockEntered data = {}", data);
-        
+
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String blockId = entry.getKey();
             Long enteredAt = entry.getValue();
-            
+
             Optional<Block> blockOpt = blockRepo.findById(blockId);
             if (blockOpt.isPresent()) {
                 Block block = blockOpt.get();
@@ -102,11 +104,11 @@ public class VFLServiceImpl implements VFLService {
     @Override
     public void updateBlockReturned(Map<String, Long> data) {
         log.trace("updateBlockReturned data = {}", data);
-        
+
         for (Map.Entry<String, Long> entry : data.entrySet()) {
             String blockId = entry.getKey();
             Long returnedAt = entry.getValue();
-            
+
             Optional<Block> blockOpt = blockRepo.findById(blockId);
             if (blockOpt.isPresent()) {
                 Block block = blockOpt.get();
@@ -248,6 +250,30 @@ public class VFLServiceImpl implements VFLService {
     }
 
     @Override
+    @Transactional
+    public void deleteBlocksById(List<String> blockIds) {
+        //TODO delete other blocks that are referenced in bg
+        if (blockIds == null || blockIds.isEmpty()) {
+            return;
+        }
+
+        log.trace("deleteBlocksById blockIds = {}", blockIds);
+
+        // Delete related logs first (foreign key constraint)
+        int deletedLogs = cbf.delete(entityManager, BlockLog.class)
+                .where("blockId").in(blockIds)
+                .executeUpdate();
+
+        // Then delete the blocks
+        int deletedBlocks = cbf.delete(entityManager, Block.class)
+                .where("id").in(blockIds)
+                .executeUpdate();
+
+        log.debug("Deleted {} block logs and {} blocks", deletedLogs, deletedBlocks);
+    }
+
+    @Override
+    @Transactional
     public void purge() {
         log.trace("purging data");
 
